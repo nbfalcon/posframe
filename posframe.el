@@ -691,6 +691,7 @@ You can use `posframe-delete-all' to delete all posframes."
 
 (defun posframe--get-font-height (position)
   "Get the font's height at POSITION."
+  (declare-function font-info "font.c" (name &optional frame))
   (if (eq position (car posframe--last-font-height-info))
       (cdr posframe--last-font-height-info)
     (let* ((font (when (and (integerp position)
@@ -716,7 +717,7 @@ posframe from catching keyboard input if the window manager selects it."
     (redirect-frame-focus posframe--frame (frame-parent))))
 
 (if (version< emacs-version "27.1")
-    (add-hook 'focus-in-hook #'posframe--redirect-posframe-focus)
+    (with-no-warnings (add-hook 'focus-in-hook #'posframe--redirect-posframe-focus))
   (add-function :after after-focus-change-function #'posframe--redirect-posframe-focus))
 
 (defun posframe--mouse-banish (parent-frame &optional posframe)
